@@ -5,13 +5,77 @@ import time
 good_values = set([1,2,3,6,12,24,48,96,192,384,768,1536,3072,6144,12288,24578,49152])
 good_move_lens = set([2,3,4,6,8,12,24])
 
-weights = np.array([
+# 39k
+orig_weights = np.array([
         [ 128, 256, 512,1024,2048],
         [  64,  32,  16,   8,   4],
         [   2,   1,   0,   1,   2],
         [   4,   8,  16,  32,  64],
         [2048,1024, 512, 256, 128]
     ])
+
+# 33k
+one_corner_snail = np.array([
+        [ 4, 3, 2, 1, 0],
+        [ 5,12,13,14,15],
+        [ 6,11,18,17,16],
+        [ 7,10,19,22,23],
+        [ 8, 9,20,21,24]
+    ])
+one_corner_snail = 2 ** one_corner_snail
+one_corner_snail = one_corner_snail / 100
+
+# 44k
+snook_weights = np.array([
+    [8, 7, 6, 5, 4],
+    [1, 0, 0, 0, 3],
+    [2, 0, 0, 0, 2],
+    [3, 0, 0, 0, 1],
+    [4, 5, 6, 7, 8]
+])
+snook_weights = 2 ** snook_weights
+
+# 46k (current record)
+hsnail_weights = np.array([
+    [18, 15, 14, 13, 14],
+    [1, 0, 0, 0, 11],
+    [2, 0, 0, 0, 10],
+    [3, 0, 0, 0, 9],
+    [6, 5, 6, 7, 10]
+])
+hsnail_weights = 2 ** hsnail_weights
+
+# 11k
+hsnail2_weights = np.array([
+    [17, 15, 14, 13, 13],
+    [1, 0, 0, 0, 11],
+    [2, 0, 0, 0, 10],
+    [3, 0, 0, 0, 9],
+    [5, 5, 6, 7, 9]
+])
+hsnail2_weights = 2 ** hsnail2_weights
+
+# Bad-ish score was forgotten
+hsnail3_weights = np.array([
+    [20, 18, 17, 16, 15],
+    [1, 0, 0, 0, 13],
+    [2, 0, 0, 0, 12],
+    [3, 0, 0, 0, 11],
+    [5, 6, 7, 8, 10]
+])
+hsnail3_weights = 2 ** hsnail3_weights 
+
+# 15k
+diamond_weights = np.array([
+    [16, 8, 4, 2, 1],
+    [8, 0, 0, 0, 2],
+    [4, 0, 0, 0, 4],
+    [2, 0, 0, 0, 8],
+    [1, 2, 4, 8, 16]
+])
+diamond_weights = 2 ** diamond_weights
+
+weights = hsnail_weights
 
 a_weights = weights.reshape((25,))
 b_weights = np.rot90(weights, 1).reshape((25,))
@@ -111,11 +175,12 @@ if __name__ == "__main__":
         move = []
         while move not in valid_moves:
             # THIS IS WHERE THE MOVE MACHINE GOES.
-
+            num_val_moves = len(valid_moves)
             num_ok_moves = eval_num_moves(game)
             print(f'Number of ok moves: {num_ok_moves}')
             if num_ok_moves > 0:
                 a = int(30/num_ok_moves)
+                #a = int(num_val_moves/num_ok_moves/4)
                 # a = max(0, int(5 - num_ok_moves/5))
                 # a = int(100/len(valid_moves))
             else:
@@ -128,9 +193,9 @@ if __name__ == "__main__":
 
         # Show the game.
         show_move(move)
-        print()
         game.make_move(move)
-        game.show_board()
+        board = np.array(game.board).reshape((5,5))
+        print('\n ' + str(board)[1:-1])
         print(f'\nScore: {game.score}')
         # Get new valid moves.
         valid_moves = game.valid_moves()
