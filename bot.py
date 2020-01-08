@@ -26,9 +26,8 @@ def eval_num_moves(game: Gridentify):
     num_ok_moves = 0
 
     for move in game.valid_moves():
-        temp_game = game.copy()
-        temp_game.make_move(move)
-        if temp_game.board[move[-1]] not in good_values:
+        result = game.board[move[0]] * len(move)
+        if result not in good_values:
             continue
         else:
             num_ok_moves += 1
@@ -112,9 +111,8 @@ if __name__ == "__main__":
         move = []
         while move not in valid_moves:
             # THIS IS WHERE THE MOVE MACHINE GOES.
-            game_cpy = game.copy()
 
-            num_ok_moves = eval_num_moves(game_cpy)
+            num_ok_moves = eval_num_moves(game)
             print(f'Number of ok moves: {num_ok_moves}')
             if num_ok_moves > 0:
                 a = int(30/num_ok_moves)
